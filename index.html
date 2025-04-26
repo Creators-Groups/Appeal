@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>フォーム利用前の確認</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', sans-serif;
+      background-color: #f8f8f8;
+      padding: 2rem;
+      margin: 0;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+    h1 {
+      font-size: 1.5rem;
+      color: #333;
+    }
+    p, li {
+      color: #555;
+      line-height: 1.6;
+    }
+    ul {
+      margin-top: 1rem;
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+    }
+    .hidden {
+      display: none;
+    }
+    .button, .next-button {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.8rem 1.5rem;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .button:hover, .next-button:hover {
+      background: #0056b3;
+    }
+    .turnstile-container {
+      margin-top: 1.5rem;
+    }
+    iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>申請フォームに進む前に</h1>
+
+    <!-- Step 1: 規約の確認 -->
+    <div id="step1">
+      <p>以下の利用規約・プライバシーポリシーをご確認ください：</p>
+      
+      <!-- Google 利用規約 -->
+      <h2>Google 利用規約</h2>
+      <iframe src="https://policies.google.com/terms?hl=ja" id="googleTosIframe" onload="checkScroll('googleTosIframe')"></iframe>
+      
+      <!-- Google プライバシーポリシー -->
+      <h2>Google プライバシーポリシー</h2>
+      <iframe src="https://policies.google.com/privacy?hl=ja" id="googlePrivacyIframe" onload="checkScroll('googlePrivacyIframe')"></iframe>
+      
+      <!-- Discord 利用規約 -->
+      <h2>Discord 利用規約</h2>
+      <iframe src="https://discord.com/terms" id="discordTosIframe" onload="checkScroll('discordTosIframe')"></iframe>
+      
+      <!-- Discord プライバシーポリシー -->
+      <h2>Discord プライバシーポリシー</h2>
+      <iframe src="https://discord.com/privacy" id="discordPrivacyIframe" onload="checkScroll('discordPrivacyIframe')"></iframe>
+
+      <button class="button" id="agreeButton" disabled onclick="agreeTerms()">すべてに同意して次へ進む</button>
+    </div>
+
+    <!-- Step 2: Turnstile認証 -->
+    <div id="step2" class="hidden">
+      <p>次に、人間であることを確認してください：</p>
+      <div class="turnstile-container">
+        <div class="cf-turnstile"
+             data-sitekey="0x4AAAAAABUTOtyEe5b5itqX"
+             data-callback="onTurnstileSuccess"></div>
+      </div>
+    </div>
+
+    <!-- Step 3: フォームに進む -->
+    <div id="step3" class="hidden">
+      <p>認証に成功しました。以下のボタンからフォームにお進みください。</p>
+      <a class="next-button" href="https://forms.gle/J84JBymmRLbaTEjG8" target="_blank">フォームに進む</a>
+    </div>
+  </div>
+
+  <script>
+    // スクロール判定を行う関数
+    function checkScroll(iframeId) {
+      const iframe = document.getElementById(iframeId);
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      const body = iframeDoc.body;
+      const iframeHeight = body.scrollHeight;
+      const iframeScrolled = body.scrollTop + body.clientHeight >= iframeHeight;
+
+      // すべての規約を見たかどうかを動的に判定
+      if (iframeScrolled) {
+        document.getElementById(iframeId + 'Checked').checked = true;
+      }
+
+      checkAgreement();
+    }
+
+    // すべての規約を見たかを判定
+    function checkAgreement() {
+      const googleTosChecked = document.getElementById("googleTosIframeChecked") && document.getElementById("googleTosIframeChecked").checked;
+      const googlePrivacyChecked = document.getElementById("googlePrivacyIframeChecked") && document.getElementById("googlePrivacyIframeChecked").checked;
+      const discordTosChecked = document.getElementById("discordTosIframeChecked") && document.getElementById("discordTosIframeChecked").checked;
+      const discordPrivacyChecked = document.getElementById("discordPrivacyIframeChecked") && document.getElementById("discordPrivacyIframeChecked").checked;
+
+      // すべての規約を見た場合のみ、ボタンを有効化
+      const agreeButton = document.getElementById("agreeButton");
+      if (googleTosChecked && googlePrivacyChecked && discordTosChecked && discordPrivacyChecked) {
+        agreeButton.disabled = false;
+      } else {
+        agreeButton.disabled = true;
+      }
+    }
+
+    // 規約同意後の処理
+    function agreeTerms() {
+      document.getElementById("step1").classList.add("hidden");
+      document.getElementById("step2").classList.remove("hidden");
+    }
+
+    // Turnstile認証後の処理
+    function onTurnstileSuccess(token) {
+      document.getElementById("step2").classList.add("hidden");
+      document.getElementById("step3").classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>
