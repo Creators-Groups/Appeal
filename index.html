@@ -33,9 +33,6 @@
       margin-bottom: 1.5rem;
       padding-left: 1.5rem;
     }
-    .hidden {
-      display: none;
-    }
     .button, .next-button {
       display: inline-block;
       margin-top: 1.5rem;
@@ -54,12 +51,6 @@
     .turnstile-container {
       margin-top: 1.5rem;
     }
-    iframe {
-      width: 100%;
-      height: 600px;
-      border: none;
-      margin-bottom: 20px;
-    }
   </style>
 </head>
 <body>
@@ -72,19 +63,23 @@
       
       <!-- Google 利用規約 -->
       <h2>Google 利用規約</h2>
-      <iframe src="https://policies.google.com/terms?hl=ja" id="googleTosIframe" onload="checkScroll('googleTosIframe')"></iframe>
+      <p><a href="https://policies.google.com/terms?hl=ja" target="_blank">Googleの利用規約</a>を確認しました。</p>
+      <input type="checkbox" id="googleTosChecked"> 確認しました
       
       <!-- Google プライバシーポリシー -->
       <h2>Google プライバシーポリシー</h2>
-      <iframe src="https://policies.google.com/privacy?hl=ja" id="googlePrivacyIframe" onload="checkScroll('googlePrivacyIframe')"></iframe>
+      <p><a href="https://policies.google.com/privacy?hl=ja" target="_blank">Googleのプライバシーポリシー</a>を確認しました。</p>
+      <input type="checkbox" id="googlePrivacyChecked"> 確認しました
       
       <!-- Discord 利用規約 -->
       <h2>Discord 利用規約</h2>
-      <iframe src="https://discord.com/terms" id="discordTosIframe" onload="checkScroll('discordTosIframe')"></iframe>
+      <p><a href="https://discord.com/terms" target="_blank">Discordの利用規約</a>を確認しました。</p>
+      <input type="checkbox" id="discordTosChecked"> 確認しました
       
       <!-- Discord プライバシーポリシー -->
       <h2>Discord プライバシーポリシー</h2>
-      <iframe src="https://discord.com/privacy" id="discordPrivacyIframe" onload="checkScroll('discordPrivacyIframe')"></iframe>
+      <p><a href="https://discord.com/privacy" target="_blank">Discordのプライバシーポリシー</a>を確認しました。</p>
+      <input type="checkbox" id="discordPrivacyChecked"> 確認しました
 
       <button class="button" id="agreeButton" disabled onclick="agreeTerms()">すべてに同意して次へ進む</button>
     </div>
@@ -107,30 +102,14 @@
   </div>
 
   <script>
-    // スクロール判定を行う関数
-    function checkScroll(iframeId) {
-      const iframe = document.getElementById(iframeId);
-      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-      const body = iframeDoc.body;
-      const iframeHeight = body.scrollHeight;
-      const iframeScrolled = body.scrollTop + body.clientHeight >= iframeHeight;
-
-      // すべての規約を見たかどうかを動的に判定
-      if (iframeScrolled) {
-        document.getElementById(iframeId + 'Checked').checked = true;
-      }
-
-      checkAgreement();
-    }
-
-    // すべての規約を見たかを判定
+    // すべての規約に同意したかを判定
     function checkAgreement() {
-      const googleTosChecked = document.getElementById("googleTosIframeChecked") && document.getElementById("googleTosIframeChecked").checked;
-      const googlePrivacyChecked = document.getElementById("googlePrivacyIframeChecked") && document.getElementById("googlePrivacyIframeChecked").checked;
-      const discordTosChecked = document.getElementById("discordTosIframeChecked") && document.getElementById("discordTosIframeChecked").checked;
-      const discordPrivacyChecked = document.getElementById("discordPrivacyIframeChecked") && document.getElementById("discordPrivacyIframeChecked").checked;
+      const googleTosChecked = document.getElementById("googleTosChecked").checked;
+      const googlePrivacyChecked = document.getElementById("googlePrivacyChecked").checked;
+      const discordTosChecked = document.getElementById("discordTosChecked").checked;
+      const discordPrivacyChecked = document.getElementById("discordPrivacyChecked").checked;
 
-      // すべての規約を見た場合のみ、ボタンを有効化
+      // すべての規約を確認した場合のみ、ボタンを有効化
       const agreeButton = document.getElementById("agreeButton");
       if (googleTosChecked && googlePrivacyChecked && discordTosChecked && discordPrivacyChecked) {
         agreeButton.disabled = false;
@@ -144,6 +123,11 @@
       document.getElementById("step1").classList.add("hidden");
       document.getElementById("step2").classList.remove("hidden");
     }
+
+    // チェックボックスの状態を監視して、次に進むボタンを更新
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+      checkbox.addEventListener('change', checkAgreement);
+    });
 
     // Turnstile認証後の処理
     function onTurnstileSuccess(token) {
