@@ -33,7 +33,7 @@
       margin-bottom: 1.5rem;
       padding-left: 1.5rem;
     }
-    .button, .next-button {
+    .button {
       display: inline-block;
       margin-top: 1.5rem;
       padding: 0.8rem 1.5rem;
@@ -45,7 +45,7 @@
       cursor: pointer;
       font-weight: bold;
     }
-    .button:hover, .next-button:hover {
+    .button:hover {
       background: #0056b3;
     }
     .turnstile-container {
@@ -57,48 +57,31 @@
   <div class="container">
     <h1>申請フォームに進む前に</h1>
 
-    <!-- Step 1: 規約の確認 -->
-    <div id="step1">
-      <p>以下の利用規約・プライバシーポリシーをご確認ください：</p>
-      
-      <!-- Google 利用規約 -->
-      <h2>Google 利用規約</h2>
-      <p><a href="https://policies.google.com/terms?hl=ja" target="_blank">Googleの利用規約</a>を確認しました。</p>
-      <input type="checkbox" id="googleTosChecked"> 確認しました
-      
-      <!-- Google プライバシーポリシー -->
-      <h2>Google プライバシーポリシー</h2>
-      <p><a href="https://policies.google.com/privacy?hl=ja" target="_blank">Googleのプライバシーポリシー</a>を確認しました。</p>
-      <input type="checkbox" id="googlePrivacyChecked"> 確認しました
-      
-      <!-- Discord 利用規約 -->
-      <h2>Discord 利用規約</h2>
-      <p><a href="https://discord.com/terms" target="_blank">Discordの利用規約</a>を確認しました。</p>
-      <input type="checkbox" id="discordTosChecked"> 確認しました
-      
-      <!-- Discord プライバシーポリシー -->
-      <h2>Discord プライバシーポリシー</h2>
-      <p><a href="https://discord.com/privacy" target="_blank">Discordのプライバシーポリシー</a>を確認しました。</p>
-      <input type="checkbox" id="discordPrivacyChecked"> 確認しました
+    <!-- 規約確認セクション -->
+    <p>以下の利用規約・プライバシーポリシーをご確認のうえ、チェックボックスにチェックを入れてください：</p>
+    
+    <!-- Google 利用規約 -->
+    <h2>Google 利用規約</h2>
+    <p><a href="https://policies.google.com/terms?hl=ja" target="_blank">Googleの利用規約</a>を確認しました。</p>
+    <input type="checkbox" id="googleTosChecked"> 確認しました
+    
+    <!-- Google プライバシーポリシー -->
+    <h2>Google プライバシーポリシー</h2>
+    <p><a href="https://policies.google.com/privacy?hl=ja" target="_blank">Googleのプライバシーポリシー</a>を確認しました。</p>
+    <input type="checkbox" id="googlePrivacyChecked"> 確認しました
+    
+    <!-- Discord 利用規約 -->
+    <h2>Discord 利用規約</h2>
+    <p><a href="https://discord.com/terms" target="_blank">Discordの利用規約</a>を確認しました。</p>
+    <input type="checkbox" id="discordTosChecked"> 確認しました
+    
+    <!-- Discord プライバシーポリシー -->
+    <h2>Discord プライバシーポリシー</h2>
+    <p><a href="https://discord.com/privacy" target="_blank">Discordのプライバシーポリシー</a>を確認しました。</p>
+    <input type="checkbox" id="discordPrivacyChecked"> 確認しました
 
-      <button class="button" id="agreeButton" disabled onclick="agreeTerms()">すべてに同意して次へ進む</button>
-    </div>
-
-    <!-- Step 2: Turnstile認証 -->
-    <div id="step2" class="hidden">
-      <p>次に、人間であることを確認してください：</p>
-      <div class="turnstile-container">
-        <div class="cf-turnstile"
-             data-sitekey="0x4AAAAAABUTOtyEe5b5itqX"
-             data-callback="onTurnstileSuccess"></div>
-      </div>
-    </div>
-
-    <!-- Step 3: フォームに進む -->
-    <div id="step3" class="hidden">
-      <p>認証に成功しました。以下のボタンからフォームにお進みください。</p>
-      <a class="next-button" href="https://forms.gle/J84JBymmRLbaTEjG8" target="_blank">フォームに進む</a>
-    </div>
+    <!-- 次のステップボタン -->
+    <button class="button" id="agreeButton" disabled onclick="nextStep()">すべてに同意して次へ進む</button>
   </div>
 
   <script>
@@ -118,22 +101,15 @@
       }
     }
 
-    // 規約同意後の処理
-    function agreeTerms() {
-      document.getElementById("step1").classList.add("hidden");
-      document.getElementById("step2").classList.remove("hidden");
+    // 規約同意後の処理（次のフォームに進む）
+    function nextStep() {
+      window.location.href = "https://forms.gle/J84JBymmRLbaTEjG8";
     }
 
     // チェックボックスの状態を監視して、次に進むボタンを更新
     document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
       checkbox.addEventListener('change', checkAgreement);
     });
-
-    // Turnstile認証後の処理
-    function onTurnstileSuccess(token) {
-      document.getElementById("step2").classList.add("hidden");
-      document.getElementById("step3").classList.remove("hidden");
-    }
   </script>
 </body>
 </html>
